@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_app/screens/scores.dart';
 import 'package:first_app/screens/sign_in.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +23,17 @@ class _HomeState extends State<Home> {
       _selectedIndex = index;
     });
   }
+
+  Widget _showTab(int index) {
+    switch (index) {
+      case 0:
+        return ScoresPage();
+        break;
+      default:
+        return ScoresPage();
+        break;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,11 +54,8 @@ class _HomeState extends State<Home> {
         title: Text('Home'),
         actions: <Widget>[Icon(Icons.perm_identity)],
       ),
-      body: RaisedButton(child: Text('test logout'),
-      onPressed: () async {
-        await FirebaseAuth.instance.signOut();
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInPage()));
-      },),
+      body: _showTab(_selectedIndex),
     );
   }
+
 }
