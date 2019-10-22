@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_app/sign_in.dart';
+import 'package:first_app/screens/sign_in.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {

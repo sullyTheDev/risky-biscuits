@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'screens/home.dart';
+import 'home.dart';
 
 class SignInPage extends StatefulWidget {
   @override
