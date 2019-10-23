@@ -1,6 +1,8 @@
+import 'package:Risky_Biscuits/screens/matches.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Risky_Biscuits/screens/leaderboard.dart';
 import 'package:Risky_Biscuits/screens/scores.dart';
+import 'package:Risky_Biscuits/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -28,7 +30,7 @@ class _HomeState extends State<Home> {
         return ScoresPage();
         break;
       case 1:
-        return LeaderboardPage();
+        return MatchPage();
         break;
       case 2:
         return LeaderboardPage();
@@ -90,8 +92,13 @@ class _HomeState extends State<Home> {
         title: bottomNavItems[_selectedIndex].title,
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: 15.0),
-            child: IconButton(icon: Icon(Icons.perm_identity), onPressed: () {},),
+            padding: EdgeInsets.only(right: 5.0),
+            child: IconButton(
+              icon: Icon(Icons.perm_identity),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+              },
+            ),
           )
         ],
       ),

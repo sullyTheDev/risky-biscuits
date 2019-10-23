@@ -36,7 +36,6 @@ class RiskyBiscuits extends StatelessWidget {
       return new StreamBuilder<FirebaseUser>(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (BuildContext context, snapshot) {
-          //return SignInPage();
             if (snapshot.hasData) {
               return Home(user: snapshot.data);
             } else {
