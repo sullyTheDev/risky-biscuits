@@ -1,9 +1,9 @@
-import 'package:first_app/screens/sign_up.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
 
-import 'home.dart';
+import 'package:first_app/components/score-tile.dart';
+import 'package:first_app/models/match.model.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ScoresPage extends StatefulWidget {
   @override
@@ -13,34 +13,46 @@ class ScoresPage extends StatefulWidget {
 }
 
 class _ScoresPageState extends State<ScoresPage> {
-  String _email, _password;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body:
-        SingleChildScrollView(
-          child: Container(
-          height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.all(25),
-          child: Center(
-            child: Text('test'),
-        )),
-        )); 
-        
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return new Text('loading...');
+          default:
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            else
+              print(snapshot.data);
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                MatchModel currentModel = snapshot.data[index];
+                return ScoreTile(
+                  team1Name: currentModel.challengerName,
+                  team2Name: currentModel.oppositionName,
+                  team1Score: currentModel.challengerScore,
+                  team2Score: currentModel.oppositionScore,
+                  matchDate: currentModel.matchDate,
+                );
+              },
+            );
+        }
+      },
+      future: _getMatches(),
+    );
   }
 
-  Future<void> _signIn() async{
-    final formState = _formKey.currentState;
-    if (formState.validate()) {
-      formState.save();
-      try {
-        FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home(user: user,)));
-      }catch(e) {
-        print(e.message);
-      }
+  Future<List<MatchModel>> _getMatches() async {
+    List<MatchModel> matches;
+    var result = await http.get('http://10.0.2.2:54732/api/match');
+    if (result.statusCode == 200) {
+      print(result.body);
+      var data = json.decode(result.body) as List;
+      matches = data.map<MatchModel>((j) => MatchModel.fromJson(j)).toList();
     }
+    return matches;
   }
 }
