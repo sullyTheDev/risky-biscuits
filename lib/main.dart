@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_app/screens/home.dart';
-import 'package:first_app/screens/sign_in.dart';
+import 'package:Risky_Biscuits/screens/home.dart';
+import 'package:Risky_Biscuits/screens/sign_in.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(RiskyBiscuits());
@@ -10,7 +10,7 @@ class RiskyBiscuits extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Risky Biscuits',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -36,6 +36,7 @@ class RiskyBiscuits extends StatelessWidget {
       return new StreamBuilder<FirebaseUser>(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (BuildContext context, snapshot) {
+          return SignInPage();
             if (snapshot.hasData) {
               return Home(user: snapshot.data);
             } else {

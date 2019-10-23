@@ -15,12 +15,12 @@ class MatchModel {
       this.oppositionName,
       this.matchDate});
   MatchModel.fromJson(Map<String, dynamic> data)
-  : id = data['id'],
-    challengerId = data['challengerId'],
-    oppositionId = data['oppositionId'],
-    challengerName = data['challengerName'],
-    oppositionName = data['oppositionName'],
-    challengerScore = data['challengerScore'],
-    oppositionScore = data['oppositionScore'],
-    matchDate = DateTime.parse(data['matchDate']);
+      : id = data['id'],
+        challengerId = data['challengerId'],
+        oppositionId = data['oppositionId'],
+        challengerName = data['challengerName'],
+        oppositionName = data['oppositionName'],
+        challengerScore = data['challengerScore'],
+        oppositionScore = data['oppositionScore'],
+        matchDate = DateTime.parse(data['matchDate']);
 }

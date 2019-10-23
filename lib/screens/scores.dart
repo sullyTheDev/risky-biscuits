@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:first_app/components/score-tile.dart';
-import 'package:first_app/models/match.model.dart';
+import 'package:Risky_Biscuits/components/score-tile.dart';
+import 'package:Risky_Biscuits/models/match.model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

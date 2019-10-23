@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_app/screens/leaderboard.dart';
-import 'package:first_app/screens/scores.dart';
+import 'package:Risky_Biscuits/screens/leaderboard.dart';
+import 'package:Risky_Biscuits/screens/scores.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

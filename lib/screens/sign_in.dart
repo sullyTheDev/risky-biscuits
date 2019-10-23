@@ -1,4 +1,4 @@
-import 'package:first_app/screens/sign_up.dart';
+import 'package:Risky_Biscuits/screens/sign_up.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
