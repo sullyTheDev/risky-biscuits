@@ -107,9 +107,9 @@ class _SignUpPageState extends State<SignUpPage> {
         var res = await http.post('http://10.0.2.2:54732/api/users',
             headers: {
               "Accept": "application/json",
-              "Content-Type": "application/x-www-form-urlencoded"
+              "Content-Type": "application/json"
             },
-            body: userModel);
+            body: json.encode(userModel));
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
