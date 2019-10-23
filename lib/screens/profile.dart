@@ -17,13 +17,77 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   UserModel _user;
+  String _email, _password;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: new Text('Profile'),
-      ),
-    );
+        appBar: AppBar(
+          title: new Text('Profile'),
+        ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 80.0, bottom: 20.0),
+                    child: Icon(Icons.account_circle,
+                        size: 150.0, color: Colors.grey),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+                    child: TextFormField(
+                      validator: (input) {
+                        if (input.isEmpty) {
+                          return 'Name is required.';
+                        }
+                        return null;
+                      },
+                      onSaved: (input) => _email = input,
+                      decoration: InputDecoration(labelText: 'Name'),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+                    child: TextFormField(
+                      validator: (input) {
+                        if (input.isEmpty) {
+                          return 'An email is required.';
+                        }
+                        return null;
+                      },
+                      onSaved: (input) => _email = input,
+                      decoration: InputDecoration(labelText: 'Email'),
+                    ),
+                  ),
+                  Padding(
+                      padding:
+                          EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+                      child: TextFormField(
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'A password is required.';
+                          } else if (input.length < 8) {
+                            return 'Password must be at least 8 characters long.';
+                          }
+                          return null;
+                        },
+                        onSaved: (input) => _password = input,
+                        decoration: InputDecoration(labelText: 'Password'),
+                        obscureText: true,
+                      )),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   @override
@@ -39,19 +103,14 @@ class _ProfileState extends State<Profile> {
   Future<UserModel> _getUser() async {
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
     UserModel userData;
-    try {
-      var result =
-          await http.get('http://10.0.2.2:54732/api/users/${fbUser.uid}');
-      if (result.statusCode == 200) {
-        var data = json.decode(result.body);
-        userData = data.map<UserModel>((x) => UserModel.fromJson(x));
-      } else {
-        userData = new UserModel(name: '', email: '');
-        _errorAlert();
-      }
-      ;
-    } catch (e) {
-      print(e.message);
+    var result =
+        await http.get('http://10.0.2.2:54732/api/users/${fbUser.uid}');
+    if (result.statusCode == 200) {
+      var data = json.decode(result.body);
+      userData = UserModel.fromJson(data);
+    } else {
+      userData = new UserModel(name: '', email: '');
+      _errorAlert();
     }
     return userData;
   }
