@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_app/screens/scores.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
   Home({
@@ -36,11 +37,11 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-        BottomNavigationBarItem(icon: Icon(Icons.hot_tub), title: Text('Hot Tub?')),
-        BottomNavigationBarItem(icon: Icon(Icons.store), title: Text('Store')),
-        BottomNavigationBarItem(icon: Icon(Icons.local_play), title: Text('Tickets')),
+      bottomNavigationBar: BottomNavigationBar(items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/scoreboard.svg', width: 20.0, height: 20.0,), title: Text('Scores')),
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/puck.svg', width: 20.0, height: 20.0,), title: Text('Matches')),
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/leaderboard.svg', width: 20.0, height: 20.0,), title: Text('Leaderboards')),
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/team.svg', width: 20.0, height: 20.0,), title: Text('Teams')),
       ],
       backgroundColor: Colors.white,
       selectedItemColor: Theme.of(context).primaryColor,

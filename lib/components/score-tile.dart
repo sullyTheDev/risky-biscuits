@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ScoreTile extends StatelessWidget {
   final String team1Name, team2Name;
@@ -74,7 +75,7 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            this.matchDate.toString(),
+            DateFormat('EEE, MM/dd h:mm a').format(this.matchDate),
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14.0),
           ),
           Padding(
