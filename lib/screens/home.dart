@@ -39,15 +39,15 @@ class _HomeState extends State<Home> {
     }
   }
 
+  final List<BottomNavigationBarItem> bottomNavItems = [BottomNavigationBarItem(icon: SvgPicture.asset('assets/scoreboard.svg', width: 20.0, height: 20.0,), title: Text('Scores')),
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/puck.svg', width: 20.0, height: 20.0,), title: Text('Matches')),
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/leaderboard.svg', width: 20.0, height: 20.0,), title: Text('Leaderboards')),
+        BottomNavigationBarItem(icon: SvgPicture.asset('assets/team.svg', width: 20.0, height: 20.0,), title: Text('Teams'))];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: SvgPicture.asset('assets/scoreboard.svg', width: 20.0, height: 20.0,), title: Text('Scores')),
-        BottomNavigationBarItem(icon: SvgPicture.asset('assets/puck.svg', width: 20.0, height: 20.0,), title: Text('Matches')),
-        BottomNavigationBarItem(icon: SvgPicture.asset('assets/leaderboard.svg', width: 20.0, height: 20.0,), title: Text('Leaderboards')),
-        BottomNavigationBarItem(icon: SvgPicture.asset('assets/team.svg', width: 20.0, height: 20.0,), title: Text('Teams')),
-      ],
+      bottomNavigationBar: BottomNavigationBar(items: bottomNavItems,
       backgroundColor: Colors.white,
       selectedItemColor: Theme.of(context).primaryColor,
       unselectedItemColor: Colors.black,
@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
       onTap: _onItemTapped,
       currentIndex: _selectedIndex,),
       appBar: AppBar(
-        title: Text('Home'),
+        title: this.bottomNavItems[_selectedIndex].title,
         actions: <Widget>[Icon(Icons.perm_identity)],
       ),
       body: _showTab(_selectedIndex),
