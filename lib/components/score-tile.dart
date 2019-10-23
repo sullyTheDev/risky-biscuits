@@ -34,7 +34,7 @@ class ScoreTile extends StatelessWidget {
             ),
           ],
         ),
-        Divider(),
+        Divider(color: Colors.grey, height: 5.0,),
         ],));
   }
 }
