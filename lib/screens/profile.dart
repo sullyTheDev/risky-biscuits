@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Profile extends StatefulWidget {
-  Profile({Key key, this.user}) : super(key: key);
-  final FirebaseUser user;
+  // Profile({Key key, this.user}) : super(key: key);
+  // final FirebaseUser user;
 
   @override
   State<StatefulWidget> createState() {
@@ -16,37 +16,42 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  UserModel _user;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-            return new Text('loading...');
-          default:
-            UserModel currentUser = snapshot.data[0];
-            return Scaffold(
-              appBar: AppBar(title: new Text(currentUser.name)),
-            );
-        }
-      },
-      future: _getUser(),
+    return Scaffold(
+      appBar: AppBar(
+        title: new Text('Profile'),
+      ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser().then((x) {
+      setState(() {
+        _user = x;
+      });
+    });
   }
 
   Future<UserModel> _getUser() async {
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
     UserModel userData;
     try {
-      var result = await http.get('http://10.0.2.2:54732/api/users/${fbUser.uid}');
+      var result =
+          await http.get('http://10.0.2.2:54732/api/users/${fbUser.uid}');
       if (result.statusCode == 200) {
         var data = json.decode(result.body);
         userData = data.map<UserModel>((x) => UserModel.fromJson(x));
+      } else {
+        userData = new UserModel(name: '', email: '');
+        _errorAlert();
       }
+      ;
     } catch (e) {
       print(e.message);
-      _errorAlert();
     }
     return userData;
   }
