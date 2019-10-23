@@ -91,7 +91,10 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 15.0),
-            child: IconButton(icon: Icon(Icons.perm_identity), onPressed: () {},),
+            child: IconButton(
+              icon: Icon(Icons.perm_identity),
+              onPressed: () {},
+            ),
           )
         ],
       ),
