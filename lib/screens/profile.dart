@@ -17,10 +17,14 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   UserModel _user;
-  String _email, _password;
+  String _password;
+  bool changed = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    if (_user == null) {
+      return Center(child: new Text('Loading...'));
+    }
     return Scaffold(
         appBar: AppBar(
           title: new Text('Profile'),
@@ -43,30 +47,47 @@ class _ProfileState extends State<Profile> {
                     padding:
                         EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
                     child: TextFormField(
+                      initialValue: _user.name,
                       validator: (input) {
                         if (input.isEmpty) {
                           return 'Name is required.';
                         }
                         return null;
                       },
-                      onSaved: (input) => _email = input,
+                      onSaved: (input) => _user.name = input,
                       decoration: InputDecoration(labelText: 'Name'),
+                      onChanged: (input) {
+                        setState(() {
+                          if (_user.name != input)
+                            changed = true;
+                          else
+                            changed = false;
+                        });
+                      },
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-                    child: TextFormField(
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return 'An email is required.';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => _email = input,
-                      decoration: InputDecoration(labelText: 'Email'),
-                    ),
-                  ),
+                      padding:
+                          EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+                      child: TextFormField(
+                        initialValue: _user.email,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'An email is required.';
+                          }
+                          return null;
+                        },
+                        onSaved: (input) => _user.email = input,
+                        decoration: InputDecoration(labelText: 'Email'),
+                        onChanged: (input) {
+                          setState(() {
+                            if (_user.email != input)
+                              changed = true;
+                            else
+                              changed = false;
+                          });
+                        },
+                      )),
                   Padding(
                       padding:
                           EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
@@ -82,6 +103,26 @@ class _ProfileState extends State<Profile> {
                         onSaved: (input) => _password = input,
                         decoration: InputDecoration(labelText: 'Password'),
                         obscureText: true,
+                        onChanged: (input) {
+                          setState(() {
+                            if (input.isNotEmpty)
+                              changed = true;
+                            else
+                              changed = false;
+                          });
+                        },
+                      )),
+                  Padding(
+                      padding:
+                          EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: RaisedButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          onPressed: changed == false ? null : _updateUser,
+                          child: Text('Save'),
+                        ),
                       )),
                 ],
               ),
@@ -113,6 +154,23 @@ class _ProfileState extends State<Profile> {
       _errorAlert();
     }
     return userData;
+  }
+
+  Future<void> _updateUser() async {
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      formState.save();
+      if (_password != null) {
+        try {
+          FirebaseUser user = await FirebaseAuth.instance.currentUser();
+          await user.updatePassword(_password);
+        } catch (e) {
+          print(e.message);
+        }
+      }
+      // TODO update user on shuffle api
+      // await http.put(url)
+    }
   }
 
   void _errorAlert() {
