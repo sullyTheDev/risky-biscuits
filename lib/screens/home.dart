@@ -42,39 +42,39 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final List<BottomNavigationBarItem> bottomNavItems = [
-    BottomNavigationBarItem(
-        icon: SvgPicture.asset(
-          'assets/scoreboard.svg',
-          width: 20.0,
-          height: 20.0,
-          color: _selectedIndex == 0 ? Colors.orange : Colors.black,
-        ),
-        title: Text('Scores')),
-    BottomNavigationBarItem(
-        icon: SvgPicture.asset(
-          'assets/puck.svg',
-          width: 20.0,
-          height: 20.0,
-          color: _selectedIndex == 1 ? Colors.orange : Colors.black,
-        ),
-        title: Text('Matches')),
-    BottomNavigationBarItem(
-        icon: SvgPicture.asset(
-          'assets/leaderboard.svg',
-          width: 20.0,
-          height: 20.0,
-          color: _selectedIndex == 2 ? Colors.orange : Colors.black,
-        ),
-        title: Text('Leaderboards')),
-    BottomNavigationBarItem(
-        icon: SvgPicture.asset(
-          'assets/team.svg',
-          width: 20.0,
-          height: 20.0,
-          color: _selectedIndex == 3 ? Colors.orange : Colors.black,
-        ),
-        title: Text('Teams'))
-  ];
+      BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/scoreboard.svg',
+            width: 20.0,
+            height: 20.0,
+            color: _selectedIndex == 0 ? Colors.orange : Colors.black,
+          ),
+          title: Text('Scores')),
+      BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/puck.svg',
+            width: 20.0,
+            height: 20.0,
+            color: _selectedIndex == 1 ? Colors.orange : Colors.black,
+          ),
+          title: Text('Matches')),
+      BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/leaderboard.svg',
+            width: 20.0,
+            height: 20.0,
+            color: _selectedIndex == 2 ? Colors.orange : Colors.black,
+          ),
+          title: Text('Leaderboard')),
+      BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/team.svg',
+            width: 20.0,
+            height: 20.0,
+            color: _selectedIndex == 3 ? Colors.orange : Colors.black,
+          ),
+          title: Text('Teams'))
+    ];
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: bottomNavItems,

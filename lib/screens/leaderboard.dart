@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:first_app/components/leaderboard-tile.dart';
 import 'package:first_app/components/score-tile.dart';
+import 'package:first_app/models/leaderboard.model.dart';
 import 'package:first_app/models/match.model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -22,21 +24,35 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           case ConnectionState.waiting:
             return new Text('loading...');
           default:
-            return new Text('leaderboard');
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                LeaderboardModel currentModel = snapshot.data[index];
+                return LeaderboardTile(
+                  teamName: currentModel.name,
+                  elo: currentModel.elo,
+                  wins: currentModel.wins,
+                  losses: currentModel.losses,
+                );
+              },
+            );
         }
       },
       future: _getMatches(),
     );
   }
 
-  Future<List<MatchModel>> _getMatches() async {
-    List<MatchModel> matches;
-    var result = await http.get('http://10.0.2.2:54732/api/match');
+  Future<List<LeaderboardModel>> _getMatches() async {
+    List<LeaderboardModel> results;
+    var result =
+        await http.get('http://10.0.2.2:54732/api/team-records?rulesetId=2');
     if (result.statusCode == 200) {
       print(result.body);
       var data = json.decode(result.body) as List;
-      matches = data.map<MatchModel>((j) => MatchModel.fromJson(j)).toList();
+      results = data
+          .map<LeaderboardModel>((j) => LeaderboardModel.fromJson(j))
+          .toList();
     }
-    return matches;
+    return results;
   }
 }
