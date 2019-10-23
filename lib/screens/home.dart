@@ -1,13 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_app/screens/leaderboard.dart';
 import 'package:first_app/screens/scores.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
-  Home({
-    Key key,
-    this.user
-  }) : super(key: key);
+  Home({Key key, this.user}) : super(key: key);
   final FirebaseUser user;
 
   @override
@@ -29,11 +27,18 @@ class _HomeState extends State<Home> {
       case 0:
         return ScoresPage();
         break;
+      case 1:
+        return LeaderboardPage();
+        break;
+      case 2:
+        return LeaderboardPage();
+        break;  
       default:
         return ScoresPage();
         break;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,5 +62,4 @@ class _HomeState extends State<Home> {
       body: _showTab(_selectedIndex),
     );
   }
-
 }
