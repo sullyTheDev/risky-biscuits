@@ -88,7 +88,12 @@ class _HomeState extends State<Home> {
       ),
       appBar: AppBar(
         title: bottomNavItems[_selectedIndex].title,
-        actions: <Widget>[Icon(Icons.perm_identity)],
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 15.0),
+            child: IconButton(icon: Icon(Icons.perm_identity), onPressed: () {},),
+          )
+        ],
       ),
       body: _showTab(_selectedIndex),
     );
