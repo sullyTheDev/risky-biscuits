@@ -45,7 +45,7 @@ class _MatchPageState extends State<MatchPage> {
                       })),
               floatingActionButton: FloatingActionButton(
                 onPressed: () => setState(() => {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => CreateMatchPage()))

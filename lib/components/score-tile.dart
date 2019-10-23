@@ -100,7 +100,7 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
               Flexible(
                 flex: 1,
                 child: Text(
-                  this.team1Score != null ? this.team1Score.toString(): '',
+                  this.team1Score != null ? this.team1Score.toString(): 'TBD',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
                 ),
               )
@@ -128,7 +128,7 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
               Flexible(
                 flex: 1,
                 child: Text(
-                  this.team2Score != null ? this.team2Score.toString(): '',
+                  this.team2Score != null ? this.team2Score.toString(): 'TBD',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
                 ),
               )
