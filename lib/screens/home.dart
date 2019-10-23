@@ -1,3 +1,4 @@
+import 'package:Risky_Biscuits/screens/matches.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Risky_Biscuits/screens/leaderboard.dart';
 import 'package:Risky_Biscuits/screens/scores.dart';
@@ -28,7 +29,7 @@ class _HomeState extends State<Home> {
         return ScoresPage();
         break;
       case 1:
-        return LeaderboardPage();
+        return MatchPage();
         break;
       case 2:
         return LeaderboardPage();

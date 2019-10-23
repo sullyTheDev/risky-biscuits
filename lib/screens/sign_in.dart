@@ -1,3 +1,5 @@
+import 'dart:ui' as prefix0;
+
 import 'package:Risky_Biscuits/screens/sign_up.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -118,6 +120,7 @@ class _SignInPageState extends State<SignInPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
+
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
