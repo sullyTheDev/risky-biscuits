@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
         return ScoresPage();
         break;
       case 1:
-        return CreateMatchPage();
+        return MatchPage();
         break;
       case 2:
         return LeaderboardPage();

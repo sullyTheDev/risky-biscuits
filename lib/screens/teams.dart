@@ -105,6 +105,5 @@ class _TeamsPageState extends State<TeamsPage> {
         
       });
     }
-    print(result.body);
   }
 }

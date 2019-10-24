@@ -5,6 +5,7 @@ import 'package:Risky_Biscuits/models/match.model.dart';
 import 'package:Risky_Biscuits/screens/create-match.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 
 class MatchPage extends StatefulWidget {
@@ -42,9 +43,21 @@ class _MatchPageState extends State<MatchPage> {
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   MatchModel currentModel = snapshot.data[index];
-                  return Padding(
+                  return Slidable(
+                    secondaryActions: <Widget>[
+                      IconSlideAction(
+              caption: 'Cancel Match',
+              color: Colors.red,
+              iconWidget: Padding(padding: EdgeInsets.only(bottom: 5), child: Icon(Icons.cancel, color: Colors.white,),),
+              onTap: () {
+                _cancelMatch(currentModel.id);
+              },
+            ),
+                    ],
+                    actionPane: SlidableDrawerActionPane(),
+                    child: Padding(
                       padding: EdgeInsets.fromLTRB(25.0, 5.0, 25.0, 0.0),
-                      child: ScoreTile(match: currentModel, onTap: () => print('wow'),));
+                      child: ScoreTile(match: currentModel, onTap: () => print('wow'),)),);
                 },
               );
         }
@@ -52,7 +65,7 @@ class _MatchPageState extends State<MatchPage> {
       future: _getMatches(),
     );
 
-    return matchList;
+    return Scaffold(body: matchList, floatingActionButton: FloatingActionButton( onPressed: _createMatchPage, child: Icon(Icons.add),),);
   }
 
   Future<List<MatchModel>> _getMatches() async {
@@ -66,5 +79,27 @@ class _MatchPageState extends State<MatchPage> {
       results = data.map<MatchModel>((j) => MatchModel.fromJson(j)).toList();
     }
     return results;
+  }
+
+  Future<void> _cancelMatch(int id) async {
+    var result = await http
+        .put('http://10.0.2.2:54732/api/match/$id/cancel', headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: json.encode(false) );
+
+        if (result.statusCode == 200) {
+          setState(() {
+            
+          });
+        }
+  }
+
+  void _createMatchPage() {
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CreateMatchPage()));
   }
 }

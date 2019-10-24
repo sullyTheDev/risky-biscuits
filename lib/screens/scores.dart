@@ -114,7 +114,7 @@ class _ScoresPageState extends State<ScoresPage> {
                   MatchModel currentModel = snapshot.data[index];
                   return Padding(
                       padding: EdgeInsets.fromLTRB(25.0, 5.0, 25.0, 0.0),
-                      child: ScoreTile(match: currentModel, onTap: () => print('wow'),));
+                      child: ScoreTile(match: currentModel, onTap: null,));
                 },
               );
         }

@@ -22,9 +22,9 @@ class ScoreTile extends StatelessWidget {
                     flex: 5,
                     child: _ScoreTileTeamData(
                       match: this.match,
+                      onTap: this.onTap,
                     ),
                   ),
-                  IconButton(icon: Icon(Icons.chevron_right),)
                 ],
               ),
               padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 15.0),
@@ -40,8 +40,9 @@ class ScoreTile extends StatelessWidget {
 
 class _ScoreTileTeamData extends StatefulWidget {
   final MatchModel match;
+  final Function onTap;
 
-  _ScoreTileTeamData({this.match});
+  _ScoreTileTeamData({this.match, this.onTap});
 
   @override
   State<StatefulWidget> createState() {
@@ -57,12 +58,15 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
   void initState() {
     super.initState();
     this.match = widget.match;
-    this._onTap = _onTap;
+    this._onTap = widget.onTap;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( child: Column(
+    return GestureDetector( child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+      Expanded( flex: 5, child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
@@ -124,7 +128,7 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
-                flex: 4,
+                flex: 10,
                 child: Row(
                   children: <Widget>[
                     CircleAvatar(
@@ -164,7 +168,8 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
           ],
         ),
       ],
-    ), onTap: _onTap,);
+    )), _onTap == null ? Container(width: 0, height: 0,) : Expanded(child: Padding( padding: EdgeInsets.only(top: 20, left: 35), child: IconButton( onPressed: _onTap, alignment: Alignment.bottomCenter, icon: Icon(Icons.chevron_right),),))
+    ],), onTap: _onTap,);
   }
 
   Widget _winLoss(int wins, int losses) {
