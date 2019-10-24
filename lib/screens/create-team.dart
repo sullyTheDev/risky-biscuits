@@ -9,6 +9,9 @@ import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:http/http.dart' as http;
 
 class CreateTeamPage extends StatefulWidget {
+  TeamModel team;
+
+  CreateTeamPage({Key key, this.team}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return CreateTeamPageState();
@@ -17,15 +20,26 @@ class CreateTeamPage extends StatefulWidget {
 
 class CreateTeamPageState extends State<CreateTeamPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TeamModel _team;
   List<UserModel> _users;
   UserModel _selectedUser;
+  UserModel _selectedReadonlyUser;
   String _teamName;
   Color _teamColor;
 
   @override
   void initState() {
     super.initState();
-    _teamColor = Colors.blue;
+    _team = widget.team;
+
+    if (_team != null) {
+      _teamColor = Color(int.parse(_team.color));
+      _teamName = _team.name;
+      _selectedReadonlyUser = _team.users[1];
+    } else {
+      _teamColor = Colors.blue;
+    }
+
     _getUsers().then((res) {
       setState(() {
         _users = res;
@@ -58,6 +72,8 @@ class CreateTeamPageState extends State<CreateTeamPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                     child: TextFormField(
+                      enabled: _team == null,
+                      initialValue: _teamName,
                       validator: (input) {
                         if (input.isEmpty) {
                           return 'Team name is required';
@@ -71,8 +87,8 @@ class CreateTeamPageState extends State<CreateTeamPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                     child: ListTile(
-                      onTap: _showColorPicker,
-                      title: Text('Choose Team color'),
+                      onTap: _team == null ? _showColorPicker : null,
+                      title: Text('Team color'),
                       leading: CircleAvatar(
                         backgroundColor: _teamColor,
                       ),
@@ -81,38 +97,56 @@ class CreateTeamPageState extends State<CreateTeamPage> {
                   Divider(
                     color: Colors.grey,
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                      value: _selectedUser,
-                      items: _users
-                          ?.map((u) => DropdownMenuItem(
-                                value: u,
-                                child: Text(u.name),
-                              ))
-                          ?.toList(),
-                      hint: Text('Choose a teammate'),
-                      onChanged: (user) {
-                        setState(() {
-                          print(user);
-                          _selectedUser = user;
-                        });
-                      },
-                    )),
-                  ),
-                  Divider(
-                    color: Colors.grey,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      onPressed: _createTeam,
-                      child: Text('Create Team'),
-                    ),
-                  ),
+                  _team == null
+                      ? Padding(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                            value: _selectedUser,
+                            items: _users
+                                ?.map((u) => DropdownMenuItem(
+                                      value: u,
+                                      child: Text(u.name),
+                                    ))
+                                ?.toList(),
+                            hint: Text('Choose a teammate'),
+                            onChanged: (user) {
+                              setState(() {
+                                print(user);
+                                _selectedUser = user;
+                              });
+                            },
+                          )),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          child: TextFormField(
+                            enabled: _team == null,
+                            initialValue: _selectedReadonlyUser.name,
+                            decoration: InputDecoration(labelText: 'Teammate'),
+                          ),
+                        ),
+                  _team == null
+                      ? Column(
+                          children: <Widget>[
+                            Divider(
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: RaisedButton(
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                onPressed: _createTeam,
+                                child: Text('Create Team'),
+                              ),
+                            )
+                          ],
+                        )
+                      : Container(
+                          width: 0.0,
+                          height: 0.0,
+                        ),
                 ]),
           )),
         )));
@@ -140,13 +174,16 @@ class CreateTeamPageState extends State<CreateTeamPage> {
           users: [_selectedUser].toList());
       try {
         FirebaseUser user = await FirebaseAuth.instance.currentUser();
-        var result = await http.post("http://10.0.2.2:54732/api/teams?authId=${user.uid}",
+        var result = await http.post(
+            "http://10.0.2.2:54732/api/teams?authId=${user.uid}",
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"
             },
             body: json.encode(team.toMap()));
-            print(result.body);
+
+            Navigator.of(context).pop();
+        print(result.body);
       } catch (e) {
         print(e);
       }

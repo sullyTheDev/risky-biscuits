@@ -50,9 +50,15 @@ class _TeamsPageState extends State<TeamsPage> {
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     TeamModel currentTeam = snapshot.data[index];
-                    return TeamTile(
+                    return index == 0 ? Padding(child: TeamTile(
                       team: currentTeam,
-                      onTap: () {Navigator.push(context, SlideRightRoute(page: CreateTeamPage()));},
+                      onActionTap: _archiveTeam,
+                      onTap: () {Navigator.push(context, SlideRightRoute(page: CreateTeamPage(team: currentTeam,)));},
+                    ), padding: EdgeInsets.only(top:10)) : 
+                    TeamTile(
+                      team: currentTeam,
+                      onActionTap: _archiveTeam,
+                      onTap: () {Navigator.push(context, SlideRightRoute(page: CreateTeamPage(team: currentTeam,)));},
                     );
                   });
         }
@@ -85,5 +91,20 @@ class _TeamsPageState extends State<TeamsPage> {
             context,
             MaterialPageRoute(
                 builder: (context) => CreateTeamPage()));
+  }
+
+  Future<void> _archiveTeam(int id) async {
+    var result = await http.put("http://10.0.2.2:54732/api/teams/$id",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: json.encode(false));
+    if(result.statusCode == 200) {
+      setState(() {
+        
+      });
+    }
+    print(result.body);
   }
 }
