@@ -4,6 +4,8 @@ import 'package:Risky_Biscuits/components/leaderboard-tile.dart';
 import 'package:Risky_Biscuits/components/score-tile.dart';
 import 'package:Risky_Biscuits/models/leaderboard.model.dart';
 import 'package:Risky_Biscuits/models/match.model.dart';
+import 'package:Risky_Biscuits/models/team.model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -33,6 +35,8 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                   elo: currentModel.elo,
                   wins: currentModel.wins,
                   losses: currentModel.losses,
+                  teamColor: currentModel.color,
+                  rank: currentModel.rank,
                 );
               },
             );
@@ -52,6 +56,10 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
       results = data
           .map<LeaderboardModel>((j) => LeaderboardModel.fromJson(j))
           .toList();
+
+      for (int i = 0; i < results.length; i++) {
+        results[i].rank = (i + 1);
+      }
     }
     return results;
   }

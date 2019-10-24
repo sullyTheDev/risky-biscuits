@@ -1,9 +1,18 @@
+import 'package:Risky_Biscuits/models/team.model.dart';
 import 'package:flutter/material.dart';
 
 class LeaderboardTile extends StatelessWidget {
   final String teamName;
-  final int elo, wins, losses;
-  LeaderboardTile({Key key, this.teamName, this.elo, this.wins, this.losses})
+  final String teamColor;
+  final int elo, wins, losses, rank;
+  LeaderboardTile(
+      {Key key,
+      this.teamName,
+      this.elo,
+      this.wins,
+      this.losses,
+      this.teamColor,
+      this.rank})
       : super(key: key);
 
   @override
@@ -18,11 +27,12 @@ class LeaderboardTile extends StatelessWidget {
                 Expanded(
                   flex: 5,
                   child: _LeaderboardTileData(
-                    teamName: this.teamName,
-                    elo: this.elo,
-                    wins: this.wins,
-                    losses: this.losses,
-                  ),
+                      teamName: this.teamName,
+                      elo: this.elo,
+                      wins: this.wins,
+                      losses: this.losses,
+                      teamColor: this.teamColor,
+                      rank: this.rank),
                 ),
               ],
             ),
@@ -33,10 +43,16 @@ class LeaderboardTile extends StatelessWidget {
 }
 
 class _LeaderboardTileData extends StatefulWidget {
-  final String teamName;
-  final int elo, wins, losses;
+  final String teamName, teamColor;
+  final int elo, wins, losses, rank;
 
-  _LeaderboardTileData({this.teamName, this.elo, this.wins, this.losses});
+  _LeaderboardTileData(
+      {this.teamName,
+      this.elo,
+      this.wins,
+      this.losses,
+      this.teamColor,
+      this.rank});
 
   @override
   State<StatefulWidget> createState() {
@@ -45,8 +61,8 @@ class _LeaderboardTileData extends StatefulWidget {
 }
 
 class _LeaderboardTileDataState extends State<_LeaderboardTileData> {
-  String teamName;
-  int elo, wins, losses;
+  String teamName, teamColor;
+  int elo, wins, losses, rank;
 
   @override
   void initState() {
@@ -55,57 +71,48 @@ class _LeaderboardTileDataState extends State<_LeaderboardTileData> {
     this.elo = widget.elo;
     this.wins = widget.wins;
     this.losses = widget.losses;
+    this.teamColor = widget.teamColor;
+    this.rank = widget.rank;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            this.teamName,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
+    return Column(
+      children: <Widget>[
+        Container(
+          color: Colors.white,
+          child: ListTile(
+            isThreeLine: true,
+            trailing: Text('Elo: ' + this.elo.toString()),
+            leading: CircleAvatar(
+              backgroundColor: Color(int.parse(this.teamColor)),
+              child: Text(
+                _avatarText(this.teamName),
+                overflow: TextOverflow.fade,
+              ),
+              foregroundColor: Colors.white,
+            ),
+            title: Text(this.teamName),
+            subtitle: Text(this.wins.toString() +
+                ' - ' +
+                this.losses.toString() +
+                '\nRank: ' +
+                this.rank.toString()),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Expanded(
-                  flex: 4,
-                  child: Row(
-                    children: <Widget>[
-                      Text('Wins: ' + this.wins.toString()),
-                    ],
-                  )),
-              Flexible(
-                flex: 1,
-                child: Text(this.elo.toString()),
-              )
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Expanded(
-                  flex: 4,
-                  child: Row(
-                    children: <Widget>[
-                      Text('Losses: ' + this.losses.toString())
-                    ],
-                  ))
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+
+  String _avatarText(String name) {
+    String result = '';
+    name = name.trim();
+    var pieces = name.split(' ');
+
+    pieces.forEach((p) {
+      result = result + p.substring(0, 1).toUpperCase();
+    });
+
+    return result;
   }
 }
