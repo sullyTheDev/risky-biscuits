@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:Risky_Biscuits/components/leaderboard-tile.dart';
 import 'package:Risky_Biscuits/components/score-tile.dart';
-import 'package:Risky_Biscuits/models/leaderboard.model.dart';
 import 'package:Risky_Biscuits/models/match.model.dart';
 import 'package:Risky_Biscuits/screens/create-match.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -32,7 +32,7 @@ class _ScoresPageState extends State<ScoresPage> {
   }
 
   String getDateString() {
-    return "${DateFormat('M/d').format(this._dateToCheck)} - ${DateFormat('M/d').format(this._dateToCheck.add(Duration(days: 7)))}";
+    return "${DateFormat('EEE M/d').format(this._dateToCheck)} - ${DateFormat('EEE M/d').format(this._dateToCheck.add(Duration(days: 6)))}";
   }
 
   @override
@@ -43,8 +43,10 @@ class _ScoresPageState extends State<ScoresPage> {
     if (diff < 0) {
       diff += 7;
     }
-    var duration = Duration(days: diff);
+    var hrDiff = _dateToCheck.hour;
+    var duration = Duration(days: diff, hours: hrDiff);
     _dateToCheck = _dateToCheck.subtract(duration);
+    _dateToCheck = _dateToCheck.add(Duration(hours: 12));
     _dateString = getDateString();
   }
 
@@ -96,7 +98,14 @@ class _ScoresPageState extends State<ScoresPage> {
               return new Text('Error: ${snapshot.error}');
             else if (snapshot.data.length == 0) {
               return Center(
-                child: Text('There are no matches this week'),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                  Text("There ${_dateToCheck.isBefore(DateTime.now().subtract(Duration(days: 7)))? 'were' : 'are'} no matches this week"),
+                  Padding(padding: EdgeInsets.only(top: 5.0),
+                  child: Icon(Icons.sentiment_dissatisfied),)
+                ],)
+                  
               );
             } else
               return ListView.builder(
@@ -110,6 +119,8 @@ class _ScoresPageState extends State<ScoresPage> {
                         team2Name: currentModel.oppositionName,
                         team1Score: currentModel.challengerScore,
                         team2Score: currentModel.oppositionScore,
+                        team1Color: currentModel.challengerColor,
+                        team2Color: currentModel.oppositionColor,
                         matchDate: currentModel.matchDate,
                       ));
                 },

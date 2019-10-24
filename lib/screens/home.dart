@@ -1,4 +1,5 @@
 import 'package:Risky_Biscuits/screens/matches.dart';
+import 'package:Risky_Biscuits/screens/teams.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Risky_Biscuits/screens/leaderboard.dart';
 import 'package:Risky_Biscuits/screens/scores.dart';
@@ -19,9 +20,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
+     if (_selectedIndex != index) {
+       setState(() {
+      if (_selectedIndex != index) {
+        _selectedIndex = index;
+      }
     });
+      }
   }
 
   Widget _showTab(int index) {
@@ -35,6 +40,8 @@ class _HomeState extends State<Home> {
       case 2:
         return LeaderboardPage();
         break;
+      case 3:
+        return TeamsPage();
       default:
         return ScoresPage();
         break;
@@ -96,7 +103,8 @@ class _HomeState extends State<Home> {
             child: IconButton(
               icon: Icon(Icons.perm_identity),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Profile()));
               },
             ),
           )

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 class ScoreTile extends StatelessWidget {
-  final String team1Name, team2Name;
+  final String team1Name, team2Name, team1Color, team2Color;
   final DateTime matchDate;
   final int team1Score, team2Score;
   ScoreTile(
@@ -11,6 +10,8 @@ class ScoreTile extends StatelessWidget {
       this.team2Name,
       this.team1Score,
       this.team2Score,
+      this.team1Color,
+      this.team2Color,
       this.matchDate})
       : super(key: key);
 
@@ -29,6 +30,8 @@ class ScoreTile extends StatelessWidget {
                 team2Name: this.team2Name,
                 team1Score: this.team1Score,
                 team2Score: this.team2Score,
+                team1Color: this.team1Color,
+                team2Color: this.team2Color,
                 matchDate: this.matchDate,
               ),
             ),
@@ -40,11 +43,11 @@ class ScoreTile extends StatelessWidget {
 }
 
 class _ScoreTileTeamData extends StatefulWidget {
-  final String team1Name, team2Name;
+  final String team1Name, team2Name, team1Color, team2Color;
   final DateTime matchDate;
   final int team1Score, team2Score;
 
-  _ScoreTileTeamData({this.team1Name, this.team2Name, this.team1Score, this.team2Score, this.matchDate});
+  _ScoreTileTeamData({this.team1Name, this.team2Name, this.team1Score, this.team2Score, this.matchDate, this.team1Color, this.team2Color});
 
   @override
   State<StatefulWidget> createState() {
@@ -53,7 +56,7 @@ class _ScoreTileTeamData extends StatefulWidget {
 }
 
 class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
-   String team1Name, team2Name;
+   String team1Name, team2Name, team1Color, team2Color;
    DateTime matchDate;
    int team1Score, team2Score;
   
@@ -65,6 +68,8 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
     this.matchDate = widget.matchDate;
     this.team1Score = widget.team1Score;
     this.team2Score = widget.team2Score;
+    this.team1Color = widget.team1Color;
+    this.team2Color = widget.team2Color;
   }
 
   @override
@@ -89,11 +94,18 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
                 flex: 4,
                 child: Row(
                   children: <Widget>[ 
-                    _isWinner(this.team1Score, this.team2Score)? Flexible(child: Icon(Icons.star, size: 12.0,),): new Container(width: 12.0, height: 0,),
-                    Padding(padding: EdgeInsets.fromLTRB(2.0, 0, 0, 0),),
+                    CircleAvatar(
+                      maxRadius: 14.0,
+        backgroundColor: Color(int.parse(this.team1Color)),
+        child: Text(_avatarText(this.team1Name), maxLines: 1, textAlign: TextAlign.center,style: TextStyle(fontSize: 14),),
+        foregroundColor: Colors.white,
+      ),
+      Padding(padding: EdgeInsets.fromLTRB(2.0, 0, 0, 0),),
                     Text(this.team1Name,
                     style:
                         TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0)),
+      Padding(padding: EdgeInsets.fromLTRB(0.0, 0, 2.0, 0),),
+      _isWinner(this.team1Score, this.team2Score)? Flexible(child: Icon(Icons.star, size: 12.0,),): new Container(width: 12.0, height: 0,),
                   ],
                 )
               ),
@@ -117,11 +129,18 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
                 flex: 4,
                 child: Row(
                   children: <Widget>[ 
-                    _isWinner(this.team2Score, this.team1Score)? Flexible(child: Icon(Icons.star, size: 12.0,),): new Container(width: 12.0, height: 0,),
-                    Padding(padding: EdgeInsets.fromLTRB(2.0, 0, 0, 0),),
+                    CircleAvatar(
+                      maxRadius: 14.0,
+        backgroundColor: Color(int.parse(this.team2Color)),
+        child: Text(_avatarText(this.team2Name), maxLines: 1, textAlign: TextAlign.center, style: TextStyle(fontSize: 14),),
+        foregroundColor: Colors.white,
+      ),
+      Padding(padding: EdgeInsets.fromLTRB(2.0, 0, 0, 0),),
                     Text(this.team2Name,
                     style:
                         TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0)),
+                        Padding(padding: EdgeInsets.fromLTRB(0.0, 0, 2.0, 0),),
+                        _isWinner(this.team2Score, this.team1Score)? Flexible(child: Icon(Icons.star, size: 12.0,),): new Container(width: 12.0, height: 0,),
                   ],
                 )
               ),
@@ -144,5 +163,17 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
       return false;
     }
     return conditionScore > compareScore;
+  }
+
+  String _avatarText(String name) {
+    String result = '';
+    name = name.trim();
+    var pieces = name.split(' ');
+
+    pieces.forEach((p) {
+      result = result + p.substring(0, 1).toUpperCase();
+    });
+
+    return result;
   }
 }
