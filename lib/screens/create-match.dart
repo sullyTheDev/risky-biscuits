@@ -16,8 +16,9 @@ class CreateMatchPage extends StatefulWidget {
 
 class _CreateMatchPageState extends State<CreateMatchPage> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  String _mySelection = null;
-  List<TeamModel> teams = [];
+  String _selectedTeam, _selectedOpponent = null;
+  List<TeamModel> opponents = [];
+  List<TeamModel> userTeams = [];
   DateTime _fromDate = DateTime.now();
   TimeOfDay _fromTime = const TimeOfDay(hour: 7, minute: 28);
   DateTime _toDate = DateTime.now();
@@ -25,90 +26,138 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
   @override
   void initState() {
     super.initState();
-    this._getMatches();
+    this._getOpponents();
+    this._getUserTeams();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Create Match')),
-      body: new SafeArea(
-          top: false,
-          bottom: false,
-          child: new Form(
-              key: _formKey,
-              child: new ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                children: <Widget>[
-                  new FormField(
-                    builder: (FormFieldState state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Opponent',
+      body: new Form(
+          key: _formKey,
+          child: new ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: new FormField(
+                  builder: (FormFieldState state) {
+                    return InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Your Team',
+                      ),
+                      isEmpty: userTeams.length == 0,
+                      child: new DropdownButtonHideUnderline(
+                        child: new DropdownButton(
+                          items: userTeams.map((item) {
+                            return new DropdownMenuItem(
+                              child: new Text(item.name),
+                              value: item.id.toString(),
+                            );
+                          }).toList(),
+                          onChanged: (newVal) {
+                            setState(() {
+                              _selectedTeam = newVal;
+                            });
+                          },
+                          value: _selectedTeam,
                         ),
-                        isEmpty: teams.length == 0,
-                        child: new DropdownButtonHideUnderline(
-                          child: new DropdownButton(
-                            items: teams.map((item) {
-                              return new DropdownMenuItem(
-                                child: new Text(item.name),
-                                value: item.id.toString(),
-                              );
-                            }).toList(),
-                            onChanged: (newVal) {
-                              setState(() {
-                                _mySelection = newVal;
-                              });
-                            },
-                            value: _mySelection,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  new FormField(
-                    builder: (FormFieldState state) {
-                      return _DateTimePicker(
-                        labelText: 'From',
+                      ),
+                    );
+                  },
+                ),
+              ),
+              new FormField(
+                builder: (FormFieldState state) {
+                  return InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'Opponent',
+                    ),
+                    isEmpty: opponents.length == 0,
+                    child: new DropdownButtonHideUnderline(
+                      child: new DropdownButton(
+                        items: opponents.map((item) {
+                          return new DropdownMenuItem(
+                            child: new Text(item.name),
+                            value: item.id.toString(),
+                          );
+                        }).toList(),
+                        onChanged: (newVal) {
+                          setState(() {
+                            _selectedOpponent = newVal;
+                          });
+                        },
+                        value: _selectedOpponent,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              new FormField(
+                builder: (FormFieldState state) {
+                  return Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: _DateTimePicker(
+                        labelText: 'Match Date',
                         selectedDate: _fromDate,
                         selectedTime: _fromTime,
                         selectDate: (DateTime date) {
                           setState(() {
                             _fromDate = date;
+                            print(_fromDate);
                           });
                         },
                         selectTime: (TimeOfDay time) {
                           setState(() {
                             _fromTime = time;
+                            print(_fromTime);
                           });
                         },
-                      );
-                    },
-                  ),
-                  new Container(
-                      child: new RaisedButton(
+                      ));
+                },
+              ),
+              new Container(
+                  padding: EdgeInsets.only(top: 40, left: 20, right: 20),
+                  child: new RaisedButton(
                     child: const Text('Submit'),
                     onPressed: () {
                       _createMatch();
                     },
                   )),
-                ],
-              ))),
+            ],
+          )),
     );
   }
 
-  Future<List<TeamModel>> _getMatches() async {
+  Future<List<TeamModel>> _getOpponents() async {
+    // FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    List<TeamModel> results;
+    var result = await http.get('http://10.0.2.2:54732/api/teams');
+    if (result.statusCode == 200) {
+      // print(result.body);
+      var data = json.decode(result.body) as List;
+      results = data.map<TeamModel>((j) => TeamModel.fromJson(j)).toList();
+
+      setState(() {
+        opponents = results;
+      });
+    }
+    return results;
+  }
+
+  Future<List<TeamModel>> _getUserTeams() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     List<TeamModel> results;
     var result =
         await http.get('http://10.0.2.2:54732/api/teams?authId=${user.uid}');
     if (result.statusCode == 200) {
-      print(result.body);
+      // print(result.body);
       var data = json.decode(result.body) as List;
       results = data.map<TeamModel>((j) => TeamModel.fromJson(j)).toList();
 
       setState(() {
-        teams = results;
+        userTeams = results;
       });
     }
     return results;
@@ -121,9 +170,11 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance.currentUser();
         var matchModel = MatchModel(
-            oppositionId: int.parse(_mySelection),
-            challengerId: 1,
-            matchDate: new DateTime.now());
+                oppositionId: int.parse(_selectedOpponent),
+                challengerId: int.parse(_selectedTeam),
+                matchDate: new DateTime(_fromDate.year, _fromDate.month, _fromDate.day, _fromTime.hour, _fromTime.minute),
+                rulesetId: 1)
+            .toMap();
         await http.post('http://10.0.2.2:54732/api/match',
             headers: {
               "Accept": "application/json",
