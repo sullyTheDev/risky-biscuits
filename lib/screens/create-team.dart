@@ -51,7 +51,7 @@ class CreateTeamPageState extends State<CreateTeamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Create Team'),
+          title: _team == null ? Text('Create Team'): Text(_team.name),
         ),
         body: SingleChildScrollView(
             child: Container(

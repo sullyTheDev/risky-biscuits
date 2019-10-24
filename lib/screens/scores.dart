@@ -114,15 +114,7 @@ class _ScoresPageState extends State<ScoresPage> {
                   MatchModel currentModel = snapshot.data[index];
                   return Padding(
                       padding: EdgeInsets.fromLTRB(25.0, 5.0, 25.0, 0.0),
-                      child: ScoreTile(
-                        team1Name: currentModel.challengerName,
-                        team2Name: currentModel.oppositionName,
-                        team1Score: currentModel.challengerScore,
-                        team2Score: currentModel.oppositionScore,
-                        team1Color: currentModel.challengerColor,
-                        team2Color: currentModel.oppositionColor,
-                        matchDate: currentModel.matchDate,
-                      ));
+                      child: ScoreTile(match: currentModel, onTap: () => print('wow'),));
                 },
               );
         }

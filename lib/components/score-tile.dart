@@ -1,53 +1,47 @@
+import 'package:Risky_Biscuits/models/match.model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 class ScoreTile extends StatelessWidget {
-  final String team1Name, team2Name, team1Color, team2Color;
-  final DateTime matchDate;
-  final int team1Score, team2Score;
-  ScoreTile(
-      {Key key,
-      this.team1Name,
-      this.team2Name,
-      this.team1Score,
-      this.team2Score,
-      this.team1Color,
-      this.team2Color,
-      this.matchDate})
-      : super(key: key);
+  final MatchModel match;
+  final Function onTap; 
+  ScoreTile({Key key, this.match, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return GestureDetector( onTap: onTap, child: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.0),
-        child: Column(children: <Widget>[
-          Row(
-          mainAxisSize: MainAxisSize.max,
+        child: Column(
           children: <Widget>[
-            Expanded(
-              flex: 5,
-              child: _ScoreTileTeamData(
-                team1Name: this.team1Name,
-                team2Name: this.team2Name,
-                team1Score: this.team1Score,
-                team2Score: this.team2Score,
-                team1Color: this.team1Color,
-                team2Color: this.team2Color,
-                matchDate: this.matchDate,
+            Padding(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    flex: 5,
+                    child: _ScoreTileTeamData(
+                      match: this.match,
+                    ),
+                  ),
+                  IconButton(icon: Icon(Icons.chevron_right),)
+                ],
               ),
+              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 15.0),
+            ),
+            Divider(
+              color: Colors.grey,
+              height: 1.0,
             ),
           ],
-        ),
-        Divider(color: Colors.grey, height: 5.0,),
-        ],));
+        )));
   }
 }
 
 class _ScoreTileTeamData extends StatefulWidget {
-  final String team1Name, team2Name, team1Color, team2Color;
-  final DateTime matchDate;
-  final int team1Score, team2Score;
+  final MatchModel match;
 
-  _ScoreTileTeamData({this.team1Name, this.team2Name, this.team1Score, this.team2Score, this.matchDate, this.team1Color, this.team2Color});
+  _ScoreTileTeamData({this.match});
 
   @override
   State<StatefulWidget> createState() {
@@ -56,113 +50,128 @@ class _ScoreTileTeamData extends StatefulWidget {
 }
 
 class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
-   String team1Name, team2Name, team1Color, team2Color;
-   DateTime matchDate;
-   int team1Score, team2Score;
-  
+  MatchModel match;
+  Function _onTap;
+
   @override
   void initState() {
     super.initState();
-    this.team1Name = widget.team1Name;
-    this.team2Name = widget.team2Name;
-    this.matchDate = widget.matchDate;
-    this.team1Score = widget.team1Score;
-    this.team2Score = widget.team2Score;
-    this.team1Color = widget.team1Color;
-    this.team2Color = widget.team2Color;
+    this.match = widget.match;
+    this._onTap = _onTap;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            DateFormat('EEE, MM/dd h:mm a').format(this.matchDate),
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14.0),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Expanded(
+    return GestureDetector( child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          DateFormat('EEE, MM/dd h:mm a').format(this.match.matchDate),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14.0),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 2.0),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
                 flex: 4,
                 child: Row(
-                  children: <Widget>[ 
+                  children: <Widget>[
                     CircleAvatar(
                       maxRadius: 14.0,
-        backgroundColor: Color(int.parse(this.team1Color)),
-        child: Text(_avatarText(this.team1Name), maxLines: 1, textAlign: TextAlign.center,style: TextStyle(fontSize: 14),),
-        foregroundColor: Colors.white,
-      ),
-      Padding(padding: EdgeInsets.fromLTRB(2.0, 0, 0, 0),),
-                    Text(this.team1Name,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0)),
-      Padding(padding: EdgeInsets.fromLTRB(0.0, 0, 2.0, 0),),
-      _isWinner(this.team1Score, this.team2Score)? Flexible(child: Icon(Icons.star, size: 12.0,),): new Container(width: 12.0, height: 0,),
+                      backgroundColor:
+                          Color(int.parse(this.match.challengerColor)),
+                      child: Text(
+                        _avatarText(this.match.challengerName),
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      foregroundColor: Colors.white,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                    ),
+                    Text(this.match.challengerName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 16.0)),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
+                    ),
+                    _winLoss(this.match.challengerRecord.wins,
+                        this.match.challengerRecord.losses),
                   ],
-                )
+                )),
+            Flexible(
+              flex: 1,
+              child: Text(
+                this.match.challengerScore != null
+                    ? this.match.challengerScore.toString()
+                    : 'TBD',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
               ),
-              Flexible(
-                flex: 1,
-                child: Text(
-                  this.team1Score != null ? this.team1Score.toString(): 'TBD',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Expanded(
+            )
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
                 flex: 4,
                 child: Row(
-                  children: <Widget>[ 
+                  children: <Widget>[
                     CircleAvatar(
                       maxRadius: 14.0,
-        backgroundColor: Color(int.parse(this.team2Color)),
-        child: Text(_avatarText(this.team2Name), maxLines: 1, textAlign: TextAlign.center, style: TextStyle(fontSize: 14),),
-        foregroundColor: Colors.white,
-      ),
-      Padding(padding: EdgeInsets.fromLTRB(2.0, 0, 0, 0),),
-                    Text(this.team2Name,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0)),
-                        Padding(padding: EdgeInsets.fromLTRB(0.0, 0, 2.0, 0),),
-                        _isWinner(this.team2Score, this.team1Score)? Flexible(child: Icon(Icons.star, size: 12.0,),): new Container(width: 12.0, height: 0,),
+                      backgroundColor:
+                          Color(int.parse(this.match.oppositionColor)),
+                      child: Text(
+                        _avatarText(this.match.oppositionName),
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      foregroundColor: Colors.white,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                    ),
+                    Text(this.match.oppositionName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 16.0)),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
+                    ),
+                    _winLoss(this.match.oppositionRecord.wins,
+                        this.match.oppositionRecord.losses),
                   ],
-                )
+                )),
+            Flexible(
+              flex: 1,
+              child: Text(
+                this.match.oppositionScore != null
+                    ? this.match.oppositionScore.toString()
+                    : 'TBD',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
               ),
-              Flexible(
-                flex: 1,
-                child: Text(
-                  this.team2Score != null ? this.team2Score.toString(): 'TBD',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      ],
+    ), onTap: _onTap,);
   }
 
-  bool _isWinner(int conditionScore, int compareScore) {
-    if(conditionScore == null || compareScore == null) {
-      return false;
-    }
-    return conditionScore > compareScore;
+  Widget _winLoss(int wins, int losses) {
+    return Text(
+      "$wins-$losses",
+      style: TextStyle(fontSize: 12.0),
+    );
   }
 
   String _avatarText(String name) {

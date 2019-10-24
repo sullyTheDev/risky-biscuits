@@ -17,44 +17,42 @@ class MatchPage extends StatefulWidget {
 class _MatchPageState extends State<MatchPage> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    var matchList = FutureBuilder(
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
           case ConnectionState.waiting:
-            return new Text('loading...');
+            return Center(child: CircularProgressIndicator());
           default:
-            return Scaffold(
-              appBar: AppBar(title: const Text('Upcoming Matches')),
-              body: Center(
-                  child: ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        MatchModel currentModel = snapshot.data[index];
-                        return Padding(
-                            padding: EdgeInsets.fromLTRB(25.0, 5.0, 25.0, 0.0),
-                            child: ScoreTile(
-                              team1Name: currentModel.challengerName,
-                              team2Name: currentModel.oppositionName,
-                              team1Score: currentModel.challengerScore,
-                              team2Score: currentModel.oppositionScore,
-                              matchDate: currentModel.matchDate,
-                            ));
-                      })),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () => setState(() => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CreateMatchPage()))
-                    }),
-                child: const Icon(Icons.add),
-              ),
-            );
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            else if (snapshot.data.length == 0) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                  Text("You don't have any upcoming matches..."),
+                  Padding(padding: EdgeInsets.only(top: 5.0),
+                  child: Icon(Icons.sentiment_dissatisfied),)
+                ],)
+                  
+              );
+            } else
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  MatchModel currentModel = snapshot.data[index];
+                  return Padding(
+                      padding: EdgeInsets.fromLTRB(25.0, 5.0, 25.0, 0.0),
+                      child: ScoreTile(match: currentModel, onTap: () => print('wow'),));
+                },
+              );
         }
       },
       future: _getMatches(),
     );
+
+    return matchList;
   }
 
   Future<List<MatchModel>> _getMatches() async {

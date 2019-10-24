@@ -1,9 +1,12 @@
 import 'dart:core';
 
+import 'package:Risky_Biscuits/models/leaderboard.model.dart';
+
 class MatchModel {
   int id, challengerId, oppositionId, challengerScore, oppositionScore;
   String challengerName, oppositionName, oppositionColor, challengerColor;
   DateTime matchDate;
+  LeaderboardModel challengerRecord, oppositionRecord;
 
   MatchModel(
       {this.id,
@@ -26,5 +29,8 @@ class MatchModel {
         oppositionScore = data['oppositionScore'],
         oppositionColor = data['oppositionColor'],
         challengerColor = data['challengerColor'],
-        matchDate = DateTime.parse(data['matchDate']);
+        matchDate = DateTime.parse(data['matchDate']),
+        challengerRecord = LeaderboardModel.fromJson(data['challengerRecord']),
+        oppositionRecord = LeaderboardModel.fromJson(data['oppositionRecord']);
+
 }
