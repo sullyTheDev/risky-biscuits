@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Risky_Biscuits/models/user.model.dart';
+import 'package:Risky_Biscuits/screens/sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -17,9 +18,11 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   UserModel _user;
-  String _password;
+  String _existingPassword, _newPassword;
   bool changed = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  var _passKey = GlobalKey<FormFieldState>();
+  var _newPassKey = GlobalKey<FormFieldState>();
   @override
   Widget build(BuildContext context) {
     if (_user == null) {
@@ -39,7 +42,7 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(top: 80.0, bottom: 20.0),
+                    padding: EdgeInsets.only(top: 50.0, bottom: 20.0),
                     child: Icon(Icons.account_circle,
                         size: 150.0, color: Colors.grey),
                   ),
@@ -92,29 +95,46 @@ class _ProfileState extends State<Profile> {
                       padding:
                           EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
                       child: TextFormField(
+                        key: _passKey,
                         validator: (input) {
-                          if (input.isEmpty) {
-                            return 'A password is required.';
-                          } else if (input.length < 8) {
-                            return 'Password must be at least 8 characters long.';
-                          }
+                          var newPass = _newPassKey.currentState.value;
+                          if (input.isEmpty && newPass.isNotEmpty) return 'Existing password is required';
+                          if (input.isNotEmpty && input.length < 8 && newPass.isNotEmpty) return 'Password must be at least 8 characters long.';
                           return null;
                         },
-                        onSaved: (input) => _password = input,
-                        decoration: InputDecoration(labelText: 'Password'),
+                        onSaved: (input) => _existingPassword = input,
+                        decoration:
+                            InputDecoration(labelText: 'Existing Password'),
                         obscureText: true,
                         onChanged: (input) {
                           setState(() {
-                            if (input.isNotEmpty)
-                              changed = true;
-                            else
-                              changed = false;
+                            changed = input.isNotEmpty ? true : false;
                           });
                         },
                       )),
                   Padding(
                       padding:
-                          EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0),
+                          EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+                      child: TextFormField(
+                        key: _newPassKey,
+                        validator: (input) {
+                          var existingPass = _passKey.currentState.value;
+                          if (input.isEmpty && existingPass.isNotEmpty) return 'A new password is required';
+                          if (input.isNotEmpty && input.length < 8 && existingPass.isNotEmpty) return 'Password must be at least 8 characters long.';
+                          return null;
+                        },
+                        onSaved: (input) => _newPassword = input,
+                        decoration: InputDecoration(labelText: 'New Password'),
+                        obscureText: true,
+                        onChanged: (input) {
+                          setState(() {
+                            changed = input.isNotEmpty ? true : false;
+                          });
+                        },
+                      )),
+                  Padding(
+                      padding:
+                          EdgeInsets.only(left: 30.0, right: 30.0, top: 30.0),
                       child: SizedBox(
                         width: double.infinity,
                         child: RaisedButton(
@@ -122,6 +142,18 @@ class _ProfileState extends State<Profile> {
                           textColor: Colors.white,
                           onPressed: changed == false ? null : _updateUser,
                           child: Text('Save'),
+                        ),
+                      )),
+                  Padding(
+                      padding:
+                          EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: RaisedButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          onPressed: _logOut,
+                          child: Text('Log out'),
                         ),
                       )),
                 ],
@@ -158,19 +190,55 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _updateUser() async {
     final formState = _formKey.currentState;
+    bool updatePWSuccess, updateUserSuccess = false;
     if (formState.validate()) {
       formState.save();
-      if (_password != null) {
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      if (_existingPassword != null && _newPassword != null) {
         try {
-          FirebaseUser user = await FirebaseAuth.instance.currentUser();
-          await user.updatePassword(_password);
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: user.email, password: _existingPassword);
+          user
+              .updatePassword(_newPassword)
+              .whenComplete(() => {updatePWSuccess = true});
         } catch (e) {
           print(e.message);
         }
+      } else
+        updatePWSuccess = true;
+      try {
+        var userModel =
+            UserModel(name: _user.name, email: _user.email, authId: user.uid)
+                .toMap();
+        http
+            .put('http://10.0.2.2:54732/api/users/${user.uid}',
+                headers: {
+                  "Accept": "application/json",
+                  "Content-Type": "application/json"
+                },
+                body: json.encode(userModel))
+            .whenComplete(() => {updateUserSuccess = true});
+      } catch (e) {
+        print(e.message);
       }
-      // TODO update user on shuffle api
-      // await http.put(url)
+      if (updatePWSuccess == true && updateUserSuccess == true) {
+        _showSuccessSnackbar();
+        changed = false;
+      }
+      updatePWSuccess = false;
+      updateUserSuccess = false;
     }
+  }
+
+  void _logOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => SignInPage()));
+  }
+
+  void _showSuccessSnackbar() {
+    final snackBar = SnackBar(content: Text('Save Successful'));
+    Scaffold.of(context).showSnackBar(snackBar);
   }
 
   void _errorAlert() {
