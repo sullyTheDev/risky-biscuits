@@ -32,9 +32,9 @@ class MatchModel {
         challengerColor = data['challengerColor'],
         matchDate = DateTime.parse(data['matchDate']),
         challengerRecord = LeaderboardModel.fromJson(data['challengerRecord']),
-        oppositionRecord = LeaderboardModel.fromJson(data['oppositionRecord'])
+        oppositionRecord = LeaderboardModel.fromJson(data['oppositionRecord']),
         rulesetId = data['rulesetId'];
-        
+
   Map toMap() {
     var map = new Map<String, String>();
     map['challengerId'] = this.challengerId.toString();
