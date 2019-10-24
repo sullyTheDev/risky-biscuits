@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:Risky_Biscuits/components/slide-right-nav.dart';
 import 'package:Risky_Biscuits/components/team-tile.dart';
 import 'package:Risky_Biscuits/models/team.model.dart';
 import 'package:Risky_Biscuits/screens/create-team.dart';
@@ -51,6 +52,7 @@ class _TeamsPageState extends State<TeamsPage> {
                     TeamModel currentTeam = snapshot.data[index];
                     return TeamTile(
                       team: currentTeam,
+                      onTap: () {Navigator.push(context, SlideRightRoute(page: CreateTeamPage()));},
                     );
                   });
         }

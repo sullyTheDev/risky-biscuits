@@ -4,8 +4,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TeamTile extends StatefulWidget {
   final TeamModel team;
+  final Function onTap;
 
-  TeamTile({Key key, this.team}):super(key: key);
+  TeamTile({Key key, this.team, this.onTap}):super(key: key);
 
 
   @override
@@ -17,10 +18,12 @@ class TeamTile extends StatefulWidget {
 
 class _TeamTileState extends State<TeamTile> {
   TeamModel team;
+  Function onTap;
   @override
   void initState() {
     super.initState();
     this.team = widget.team;
+    this.onTap = widget.onTap;
   }
 
   @override
@@ -32,6 +35,7 @@ class _TeamTileState extends State<TeamTile> {
   child: Container(
     color: Colors.white,
     child: ListTile(
+      onTap: this.onTap,
       leading: CircleAvatar(
         backgroundColor: Color(int.parse(this.team.color)),
         child: Text(_avatarText(this.team.name), overflow: TextOverflow.fade,),
@@ -40,14 +44,6 @@ class _TeamTileState extends State<TeamTile> {
       title: Text(this.team.name),
     ),
   ),
-  actions: <Widget>[
-    IconSlideAction(
-      caption: 'More Info',
-      color: Colors.black45,
-      icon: Icons.more_horiz,
-      onTap: () {},
-    ),
-  ],
   secondaryActions: <Widget>[
     IconSlideAction(
       caption: 'Leave',

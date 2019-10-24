@@ -13,4 +13,12 @@ class TeamModel {
         name = data['name'],
         color = data['color'],
         users = (data['users'] as List).map((u) => UserModel.fromJson(u)).toList();
+
+        Map toMap() {
+    var map = new Map<String, dynamic>();
+    map['name'] = this.name;
+    map['color'] = this.color;
+    map['users'] = this.users.map((u) => u.toMap()).toList();
+    return map;
+  }
 }
