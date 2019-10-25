@@ -5,6 +5,8 @@ import 'package:Risky_Biscuits/models/leaderboard.model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../env.dart';
+
 class LeaderboardPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -45,7 +47,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
   Future<List<LeaderboardModel>> _getMatches() async {
     List<LeaderboardModel> results;
     var result =
-        await http.get('http://10.0.2.2:54732/api/team-records?rulesetId=2');
+        await http.get('${Env().baseUrl}/team-records?rulesetId=2');
     if (result.statusCode == 200) {
       print(result.body);
       var data = json.decode(result.body) as List;

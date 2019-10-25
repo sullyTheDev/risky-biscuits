@@ -4,6 +4,7 @@ import 'package:Risky_Biscuits/models/user.model.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import '../env.dart';
 import './home.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -104,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
             .createUserWithEmailAndPassword(email: _email, password: _password);
         var userModel =
             UserModel(name: _name, email: _email, authId: user.uid).toMap();
-        await http.post('http://10.0.2.2:54732/api/users',
+        await http.post('${Env().baseUrl}/users',
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../env.dart';
+
 class CreateMatchPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -137,7 +139,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
 
   Future<List<TeamModel>> _getOpponents() async {
     List<TeamModel> results;
-    var result = await http.get('http://10.0.2.2:54732/api/teams');
+    var result = await http.get('${Env().baseUrl}/teams');
     if (result.statusCode == 200) {
       // print(result.body);
       var data = json.decode(result.body) as List;
@@ -154,7 +156,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     List<TeamModel> results;
     var result =
-        await http.get('http://10.0.2.2:54732/api/teams?authId=${user.uid}');
+        await http.get('${Env().baseUrl}/teams?authId=${user.uid}');
     if (result.statusCode == 200) {
       // print(result.body);
       var data = json.decode(result.body) as List;
@@ -179,7 +181,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                     _fromDate.day, _fromTime.hour, _fromTime.minute),
                 rulesetId: 1)
             .toMap();
-        var result = await http.post('http://10.0.2.2:54732/api/match',
+        var result = await http.post('${Env().baseUrl}/match',
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"

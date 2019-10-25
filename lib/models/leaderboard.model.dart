@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import 'package:Risky_Biscuits/models/team.model.dart';
 
 class LeaderboardModel {
   int teamId, rulesetId, elo, wins, losses, rank;

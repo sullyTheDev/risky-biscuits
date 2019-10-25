@@ -1,4 +1,3 @@
-import 'package:Risky_Biscuits/models/team.model.dart';
 import 'package:flutter/material.dart';
 
 class LeaderboardTile extends StatelessWidget {

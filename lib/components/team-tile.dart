@@ -1,9 +1,7 @@
-import 'dart:convert';
 
 import 'package:Risky_Biscuits/models/team.model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:http/http.dart' as http;
 
 class TeamTile extends StatefulWidget {
   final TeamModel team;

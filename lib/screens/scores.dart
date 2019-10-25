@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../env.dart';
+
 class ScoresPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -129,7 +131,7 @@ class _ScoresPageState extends State<ScoresPage> {
   Future<List<MatchModel>> _getMatches() async {
     List<MatchModel> matches;
     var result = await http.get(
-        "http://10.0.2.2:54732/api/match?datetocheck=${_dateToCheck.toString()}");
+        "${Env().baseUrl}/match?datetocheck=${_dateToCheck.toString()}");
     if (result.statusCode == 200) {
       var data = json.decode(result.body) as List;
       matches = data.map<MatchModel>((j) => MatchModel.fromJson(j)).toList();
