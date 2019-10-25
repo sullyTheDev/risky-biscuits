@@ -25,9 +25,6 @@ class _ProfileState extends State<Profile> {
   var _newPassKey = GlobalKey<FormFieldState>();
   @override
   Widget build(BuildContext context) {
-    if (_user == null) {
-      return Center(child: new Text('Loading...'));
-    }
     return Scaffold(
         appBar: AppBar(
           title: new Text('Profile'),
@@ -36,128 +33,140 @@ class _ProfileState extends State<Profile> {
           child: Center(
             child: Form(
               key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 50.0, bottom: 20.0),
-                    child: Icon(Icons.account_circle,
-                        size: 150.0, color: Colors.grey),
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-                    child: TextFormField(
-                      initialValue: _user.name,
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return 'Name is required.';
-                        }
-                        return null;
-                      },
-                      onSaved: (input) => _user.name = input,
-                      decoration: InputDecoration(labelText: 'Name'),
-                      onChanged: (input) {
-                        setState(() {
-                          if (_user.name != input)
-                            changed = true;
-                          else
-                            changed = false;
-                        });
-                      },
+              child: _user == null
+                  ? CircularProgressIndicator()
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(top: 50.0, bottom: 20.0),
+                          child: Icon(Icons.account_circle,
+                              size: 150.0, color: Colors.grey),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 20.0, left: 30.0, right: 30.0),
+                          child: TextFormField(
+                            initialValue: _user.name,
+                            validator: (input) {
+                              if (input.isEmpty) {
+                                return 'Name is required.';
+                              }
+                              return null;
+                            },
+                            onSaved: (input) => _user.name = input,
+                            decoration: InputDecoration(labelText: 'Name'),
+                            onChanged: (input) {
+                              setState(() {
+                                if (_user.name != input)
+                                  changed = true;
+                                else
+                                  changed = false;
+                              });
+                            },
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: 20.0, left: 30.0, right: 30.0),
+                            child: TextFormField(
+                              initialValue: _user.email,
+                              validator: (input) {
+                                if (input.isEmpty) {
+                                  return 'An email is required.';
+                                }
+                                return null;
+                              },
+                              onSaved: (input) => _user.email = input,
+                              decoration: InputDecoration(labelText: 'Email'),
+                              onChanged: (input) {
+                                setState(() {
+                                  if (_user.email != input)
+                                    changed = true;
+                                  else
+                                    changed = false;
+                                });
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: 20.0, left: 30.0, right: 30.0),
+                            child: TextFormField(
+                              key: _passKey,
+                              validator: (input) {
+                                var newPass = _newPassKey.currentState.value;
+                                if (input.isEmpty && newPass.isNotEmpty)
+                                  return 'Existing password is required';
+                                if (input.isNotEmpty &&
+                                    input.length < 8 &&
+                                    newPass.isNotEmpty)
+                                  return 'Password must be at least 8 characters long.';
+                                return null;
+                              },
+                              onSaved: (input) => _existingPassword = input,
+                              decoration: InputDecoration(
+                                  labelText: 'Existing Password'),
+                              obscureText: true,
+                              onChanged: (input) {
+                                setState(() {
+                                  changed = input.isNotEmpty ? true : false;
+                                });
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: 20.0, left: 30.0, right: 30.0),
+                            child: TextFormField(
+                              key: _newPassKey,
+                              validator: (input) {
+                                var existingPass = _passKey.currentState.value;
+                                if (input.isEmpty && existingPass.isNotEmpty)
+                                  return 'A new password is required';
+                                if (input.isNotEmpty &&
+                                    input.length < 8 &&
+                                    existingPass.isNotEmpty)
+                                  return 'Password must be at least 8 characters long.';
+                                return null;
+                              },
+                              onSaved: (input) => _newPassword = input,
+                              decoration:
+                                  InputDecoration(labelText: 'New Password'),
+                              obscureText: true,
+                              onChanged: (input) {
+                                setState(() {
+                                  changed = input.isNotEmpty ? true : false;
+                                });
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0, right: 30.0, top: 30.0),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: RaisedButton(
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                onPressed:
+                                    changed == false ? null : _updateUser,
+                                child: Text('Save'),
+                              ),
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0, right: 30.0, top: 10.0),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: RaisedButton(
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                onPressed: _logOut,
+                                child: Text('Log out'),
+                              ),
+                            )),
+                      ],
                     ),
-                  ),
-                  Padding(
-                      padding:
-                          EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-                      child: TextFormField(
-                        initialValue: _user.email,
-                        validator: (input) {
-                          if (input.isEmpty) {
-                            return 'An email is required.';
-                          }
-                          return null;
-                        },
-                        onSaved: (input) => _user.email = input,
-                        decoration: InputDecoration(labelText: 'Email'),
-                        onChanged: (input) {
-                          setState(() {
-                            if (_user.email != input)
-                              changed = true;
-                            else
-                              changed = false;
-                          });
-                        },
-                      )),
-                  Padding(
-                      padding:
-                          EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-                      child: TextFormField(
-                        key: _passKey,
-                        validator: (input) {
-                          var newPass = _newPassKey.currentState.value;
-                          if (input.isEmpty && newPass.isNotEmpty) return 'Existing password is required';
-                          if (input.isNotEmpty && input.length < 8 && newPass.isNotEmpty) return 'Password must be at least 8 characters long.';
-                          return null;
-                        },
-                        onSaved: (input) => _existingPassword = input,
-                        decoration:
-                            InputDecoration(labelText: 'Existing Password'),
-                        obscureText: true,
-                        onChanged: (input) {
-                          setState(() {
-                            changed = input.isNotEmpty ? true : false;
-                          });
-                        },
-                      )),
-                  Padding(
-                      padding:
-                          EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-                      child: TextFormField(
-                        key: _newPassKey,
-                        validator: (input) {
-                          var existingPass = _passKey.currentState.value;
-                          if (input.isEmpty && existingPass.isNotEmpty) return 'A new password is required';
-                          if (input.isNotEmpty && input.length < 8 && existingPass.isNotEmpty) return 'Password must be at least 8 characters long.';
-                          return null;
-                        },
-                        onSaved: (input) => _newPassword = input,
-                        decoration: InputDecoration(labelText: 'New Password'),
-                        obscureText: true,
-                        onChanged: (input) {
-                          setState(() {
-                            changed = input.isNotEmpty ? true : false;
-                          });
-                        },
-                      )),
-                  Padding(
-                      padding:
-                          EdgeInsets.only(left: 30.0, right: 30.0, top: 30.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: RaisedButton(
-                          color: Colors.blue,
-                          textColor: Colors.white,
-                          onPressed: changed == false ? null : _updateUser,
-                          child: Text('Save'),
-                        ),
-                      )),
-                  Padding(
-                      padding:
-                          EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: RaisedButton(
-                          color: Colors.blue,
-                          textColor: Colors.white,
-                          onPressed: _logOut,
-                          child: Text('Log out'),
-                        ),
-                      )),
-                ],
-              ),
             ),
           ),
         ));
