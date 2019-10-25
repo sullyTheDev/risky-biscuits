@@ -16,13 +16,11 @@ class CreateMatchPage extends StatefulWidget {
 
 class _CreateMatchPageState extends State<CreateMatchPage> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  String _selectedTeam, _selectedOpponent = null;
+  String _selectedTeam, _selectedOpponent;
   List<TeamModel> opponents = [];
   List<TeamModel> userTeams = [];
   DateTime _fromDate;
   TimeOfDay _fromTime;
-  DateTime _toDate = DateTime.now();
-  TimeOfDay _toTime = const TimeOfDay(hour: 7, minute: 28);
   @override
   void initState() {
     super.initState();
@@ -122,10 +120,15 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
               new Container(
                   padding: EdgeInsets.only(top: 40, left: 20, right: 20),
                   child: new RaisedButton(
+                    color: Colors.blue,
+                    textColor: Colors.white,
                     child: const Text('Submit'),
-                    onPressed: () {
-                      _createMatch();
-                    },
+                    onPressed:
+                        _selectedOpponent != null && _selectedTeam != null
+                            ? () {
+                                _createMatch();
+                              }
+                            : null,
                   )),
             ],
           )),
@@ -133,7 +136,6 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
   }
 
   Future<List<TeamModel>> _getOpponents() async {
-    // FirebaseUser user = await FirebaseAuth.instance.currentUser();
     List<TeamModel> results;
     var result = await http.get('http://10.0.2.2:54732/api/teams');
     if (result.statusCode == 200) {
@@ -170,11 +172,11 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
     if (formState.validate()) {
       formState.save();
       try {
-        FirebaseUser user = await FirebaseAuth.instance.currentUser();
         var matchModel = MatchModel(
                 oppositionId: int.parse(_selectedOpponent),
                 challengerId: int.parse(_selectedTeam),
-                matchDate: new DateTime(_fromDate.year, _fromDate.month, _fromDate.day, _fromTime.hour, _fromTime.minute),
+                matchDate: new DateTime(_fromDate.year, _fromDate.month,
+                    _fromDate.day, _fromTime.hour, _fromTime.minute),
                 rulesetId: 1)
             .toMap();
         var result = await http.post('http://10.0.2.2:54732/api/match',
@@ -183,7 +185,8 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
               "Content-Type": "application/json"
             },
             body: json.encode(matchModel));
-            print(result);
+        print(result);
+        Navigator.of(context).pop();
       } catch (e) {
         print(e);
       }
@@ -259,11 +262,11 @@ class __DateTimePickerState extends State<_DateTimePicker> {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: widget.selectedDate,
-      firstDate: widget.selectedDate.subtract(Duration(hours: DateTime.now().hour)),
+      firstDate:
+          widget.selectedDate.subtract(Duration(hours: DateTime.now().hour)),
       lastDate: DateTime(2101),
     );
-    if (picked != null)
-      widget.selectDate(picked);
+    if (picked != null) widget.selectDate(picked);
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -271,8 +274,7 @@ class __DateTimePickerState extends State<_DateTimePicker> {
       context: context,
       initialTime: widget.selectedTime,
     );
-    if (picked != null)
-      widget.selectTime(picked);
+    if (picked != null) widget.selectTime(picked);
   }
 
   @override
