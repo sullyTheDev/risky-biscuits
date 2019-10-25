@@ -105,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
             .createUserWithEmailAndPassword(email: _email, password: _password);
         var userModel =
             UserModel(name: _name, email: _email, authId: user.uid).toMap();
-        await http.post('${Env().baseUrl}/api/users',
+        await http.post('${Env().baseUrl}/users',
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"

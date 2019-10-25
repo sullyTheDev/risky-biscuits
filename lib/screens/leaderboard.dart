@@ -47,7 +47,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
   Future<List<LeaderboardModel>> _getMatches() async {
     List<LeaderboardModel> results;
     var result =
-        await http.get('${Env().baseUrl}/api/team-records?rulesetId=2');
+        await http.get('${Env().baseUrl}/team-records?rulesetId=2');
     if (result.statusCode == 200) {
       print(result.body);
       var data = json.decode(result.body) as List;

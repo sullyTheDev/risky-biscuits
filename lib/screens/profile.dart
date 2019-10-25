@@ -188,7 +188,7 @@ class _ProfileState extends State<Profile> {
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
     UserModel userData;
     var result =
-        await http.get('${Env().baseUrl}/api/users/${fbUser.uid}');
+        await http.get('${Env().baseUrl}/users/${fbUser.uid}');
     if (result.statusCode == 200) {
       var data = json.decode(result.body);
       userData = UserModel.fromJson(data);
@@ -224,7 +224,7 @@ class _ProfileState extends State<Profile> {
             UserModel(name: _user.name, email: _user.email, authId: user.uid)
                 .toMap();
         var result = await http
-            .put('${Env().baseUrl}/api/users/${user.uid}',
+            .put('${Env().baseUrl}/users/${user.uid}',
                 headers: {
                   "Accept": "application/json",
                   "Content-Type": "application/json"

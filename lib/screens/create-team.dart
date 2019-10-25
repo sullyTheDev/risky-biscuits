@@ -157,7 +157,7 @@ class CreateTeamPageState extends State<CreateTeamPage> {
     List<UserModel> users;
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     var result =
-        await http.get("${Env().baseUrl}/api/users?authId=${user.uid}");
+        await http.get("${Env().baseUrl}/users?authId=${user.uid}");
     if (result.statusCode == 200) {
       var data = json.decode(result.body) as List;
       users = data.map<UserModel>((u) => UserModel.fromJson(u)).toList();
@@ -176,7 +176,7 @@ class CreateTeamPageState extends State<CreateTeamPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance.currentUser();
         var result = await http.post(
-            "${Env().baseUrl}/api/teams?authId=${user.uid}",
+            "${Env().baseUrl}/teams?authId=${user.uid}",
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"

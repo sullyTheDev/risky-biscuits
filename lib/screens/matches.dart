@@ -74,7 +74,7 @@ class _MatchPageState extends State<MatchPage> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     List<MatchModel> results;
     var result = await http
-        .get("${Env().baseUrl}/api/match?future=true&authId=${user.uid}");
+        .get("${Env().baseUrl}/match?future=true&authId=${user.uid}");
     if (result.statusCode == 200) {
       print(result.body);
       var data = json.decode(result.body) as List;
@@ -85,7 +85,7 @@ class _MatchPageState extends State<MatchPage> {
 
   Future<void> _cancelMatch(int id) async {
     var result = await http
-        .put("${Env().baseUrl}/api/match/$id/cancel", headers: {
+        .put("${Env().baseUrl}/match/$id/cancel", headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
         },
