@@ -213,6 +213,7 @@ class _ProfileState extends State<Profile> {
         } catch (e) {
           updatePWSuccess = false;
           print(e.message);
+           _errorAlert();
         }
       } else
         updatePWSuccess = true;
@@ -231,6 +232,7 @@ class _ProfileState extends State<Profile> {
       } catch (e) {
         updateUserSuccess = false;
         print(e.message);
+        _errorAlert();
       }
       if (updatePWSuccess && updateUserSuccess) {
         setState(() {
@@ -261,7 +263,7 @@ class _ProfileState extends State<Profile> {
             new Center(
                 child: new Container(
                     child:
-                        new Text('We had trouble retreiving your profile :(')))
+                        new Text('We had a problem with your request :(')))
           ]);
         });
   }
