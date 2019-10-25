@@ -112,9 +112,7 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
             Flexible(
               flex: 1,
               child: Text(
-                this.match.challengerScore != null
-                    ? this.match.challengerScore.toString()
-                    : 'TBD',
+                _determineScoreText(this.match.challengerScore, this.match.matchDate),
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
               ),
             )
@@ -159,9 +157,7 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
             Flexible(
               flex: 1,
               child: Text(
-                this.match.oppositionScore != null
-                    ? this.match.oppositionScore.toString()
-                    : 'TBD',
+                _determineScoreText(this.match.oppositionScore, this.match.matchDate),
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
               ),
             )
@@ -189,5 +185,17 @@ class _ScoreTileTeamDataState extends State<_ScoreTileTeamData> {
     });
 
     return result;
+  }
+
+  String _determineScoreText(int score, DateTime matchDate) {
+    if(score == null) {
+      if(matchDate.isBefore(DateTime.now())) {
+        return '0';
+      } else
+      return 'TBD';
+    } else {
+      return score.toString();
+    }
+
   }
 }

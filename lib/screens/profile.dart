@@ -196,12 +196,13 @@ class _ProfileState extends State<Profile> {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       if (_existingPassword != null && _newPassword != null) {
         try {
+          updatePWSuccess = true;
           await FirebaseAuth.instance.signInWithEmailAndPassword(
               email: user.email, password: _existingPassword);
-          user
-              .updatePassword(_newPassword)
-              .whenComplete(() => {updatePWSuccess = true});
+          await user
+              .updatePassword(_newPassword);
         } catch (e) {
+          updatePWSuccess = false;
           print(e.message);
         }
       } else
@@ -210,20 +211,22 @@ class _ProfileState extends State<Profile> {
         var userModel =
             UserModel(name: _user.name, email: _user.email, authId: user.uid)
                 .toMap();
-        http
+        var result = await http
             .put('http://10.0.2.2:54732/api/users/${user.uid}',
                 headers: {
                   "Accept": "application/json",
                   "Content-Type": "application/json"
                 },
-                body: json.encode(userModel))
-            .whenComplete(() => {updateUserSuccess = true});
+                body: json.encode(userModel));
+          updateUserSuccess = result.statusCode == 200;      
       } catch (e) {
+        updateUserSuccess = false;
         print(e.message);
       }
-      if (updatePWSuccess == true && updateUserSuccess == true) {
-        _showSuccessSnackbar();
-        changed = false;
+      if (updatePWSuccess && updateUserSuccess) {
+        setState(() {
+         changed = false; 
+        }); 
       }
       updatePWSuccess = false;
       updateUserSuccess = false;
