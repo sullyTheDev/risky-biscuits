@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../env.dart';
+
 class Profile extends StatefulWidget {
   // Profile({Key key, this.user}) : super(key: key);
   // final FirebaseUser user;
@@ -186,7 +188,7 @@ class _ProfileState extends State<Profile> {
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
     UserModel userData;
     var result =
-        await http.get('http://10.0.2.2:54732/api/users/${fbUser.uid}');
+        await http.get('${Env().baseUrl}/api/users/${fbUser.uid}');
     if (result.statusCode == 200) {
       var data = json.decode(result.body);
       userData = UserModel.fromJson(data);
@@ -222,7 +224,7 @@ class _ProfileState extends State<Profile> {
             UserModel(name: _user.name, email: _user.email, authId: user.uid)
                 .toMap();
         var result = await http
-            .put('http://10.0.2.2:54732/api/users/${user.uid}',
+            .put('${Env().baseUrl}/api/users/${user.uid}',
                 headers: {
                   "Accept": "application/json",
                   "Content-Type": "application/json"
@@ -250,10 +252,10 @@ class _ProfileState extends State<Profile> {
         context, MaterialPageRoute(builder: (context) => SignInPage()));
   }
 
-  void _showSuccessSnackbar() {
-    final snackBar = SnackBar(content: Text('Save Successful'));
-    Scaffold.of(context).showSnackBar(snackBar);
-  }
+  // void _showSuccessSnackbar() {
+  //   final snackBar = SnackBar(content: Text('Save Successful'));
+  //   Scaffold.of(context).showSnackBar(snackBar);
+  // }
 
   void _errorAlert() {
     showDialog(
@@ -268,29 +270,29 @@ class _ProfileState extends State<Profile> {
         });
   }
 
-  void _saveDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text('Unsaved changes'),
-            content: new Text(
-                'Are you sure you want to exit? There are unsaved changes on your profile.'),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              new FlatButton(
-                child: new Text('Accept'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
-  }
+  // void _saveDialog() {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: new Text('Unsaved changes'),
+  //           content: new Text(
+  //               'Are you sure you want to exit? There are unsaved changes on your profile.'),
+  //           actions: <Widget>[
+  //             new FlatButton(
+  //               child: new Text('Cancel'),
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //             new FlatButton(
+  //               child: new Text('Accept'),
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       });
+  // }
 }

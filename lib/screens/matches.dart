@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 
+import '../env.dart';
+
 class MatchPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -72,7 +74,7 @@ class _MatchPageState extends State<MatchPage> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     List<MatchModel> results;
     var result = await http
-        .get('http://10.0.2.2:54732/api/match?future=true&authId=${user.uid}');
+        .get("${Env().baseUrl}/api/match?future=true&authId=${user.uid}");
     if (result.statusCode == 200) {
       print(result.body);
       var data = json.decode(result.body) as List;
@@ -83,7 +85,7 @@ class _MatchPageState extends State<MatchPage> {
 
   Future<void> _cancelMatch(int id) async {
     var result = await http
-        .put('http://10.0.2.2:54732/api/match/$id/cancel', headers: {
+        .put("${Env().baseUrl}/api/match/$id/cancel", headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
         },

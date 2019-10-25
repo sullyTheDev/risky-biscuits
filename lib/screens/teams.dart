@@ -9,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../env.dart';
+
 class TeamsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -35,8 +37,12 @@ class _TeamsPageState extends State<TeamsPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text('You are not currently a part of a team.'),
-                    Padding(padding: EdgeInsets.only(top: 5),
-                    child: Random().nextBool() == true ? Text('how lonely...') : Text('teamwork makes the dreamwork!'),),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Random().nextBool() == true
+                          ? Text('how lonely...')
+                          : Text('teamwork makes the dreamwork!'),
+                    ),
                     FlatButton(
                       child: Text('create one now'),
                       onPressed: _createTeamPage,
@@ -50,16 +56,33 @@ class _TeamsPageState extends State<TeamsPage> {
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     TeamModel currentTeam = snapshot.data[index];
-                    return index == 0 ? Padding(child: TeamTile(
-                      team: currentTeam,
-                      onActionTap: _archiveTeam,
-                      onTap: () {Navigator.push(context, SlideRightRoute(page: CreateTeamPage(team: currentTeam,)));},
-                    ), padding: EdgeInsets.only(top:10)) : 
-                    TeamTile(
-                      team: currentTeam,
-                      onActionTap: _archiveTeam,
-                      onTap: () {Navigator.push(context, SlideRightRoute(page: CreateTeamPage(team: currentTeam,)));},
-                    );
+                    return index == 0
+                        ? Padding(
+                            child: TeamTile(
+                              team: currentTeam,
+                              onActionTap: _archiveTeam,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                        page: CreateTeamPage(
+                                      team: currentTeam,
+                                    )));
+                              },
+                            ),
+                            padding: EdgeInsets.only(top: 10))
+                        : TeamTile(
+                            team: currentTeam,
+                            onActionTap: _archiveTeam,
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  SlideRightRoute(
+                                      page: CreateTeamPage(
+                                    team: currentTeam,
+                                  )));
+                            },
+                          );
                   });
         }
       },
@@ -77,8 +100,7 @@ class _TeamsPageState extends State<TeamsPage> {
   Future<List<TeamModel>> _getTeams() async {
     List<TeamModel> teams;
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    var result =
-        await http.get("http://10.0.2.2:54732/api/teams?authId=${user.uid}");
+    var result = await http.get("${Env().baseUrl}/teams?authId=${user.uid}");
     if (result.statusCode == 200) {
       var data = json.decode(result.body) as List;
       teams = data.map<TeamModel>((t) => TeamModel.fromJson(t)).toList();
@@ -88,22 +110,18 @@ class _TeamsPageState extends State<TeamsPage> {
 
   void _createTeamPage() {
     Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CreateTeamPage()));
+        context, MaterialPageRoute(builder: (context) => CreateTeamPage()));
   }
 
   Future<void> _archiveTeam(int id) async {
-    var result = await http.put("http://10.0.2.2:54732/api/teams/$id",
+    var result = await http.put("${Env().baseUrl}/teams/$id",
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
         },
         body: json.encode(false));
-    if(result.statusCode == 200) {
-      setState(() {
-        
-      });
+    if (result.statusCode == 200) {
+      setState(() {});
     }
   }
 }

@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:Risky_Biscuits/models/team.model.dart';
 import 'package:Risky_Biscuits/models/user.model.dart';
-import 'package:Risky_Biscuits/screens/teams.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:http/http.dart' as http;
+
+import '../env.dart';
 
 class CreateTeamPage extends StatefulWidget {
   TeamModel team;
@@ -156,7 +157,7 @@ class CreateTeamPageState extends State<CreateTeamPage> {
     List<UserModel> users;
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     var result =
-        await http.get("http://10.0.2.2:54732/api/users?authId=${user.uid}");
+        await http.get("${Env().baseUrl}/api/users?authId=${user.uid}");
     if (result.statusCode == 200) {
       var data = json.decode(result.body) as List;
       users = data.map<UserModel>((u) => UserModel.fromJson(u)).toList();
@@ -175,7 +176,7 @@ class CreateTeamPageState extends State<CreateTeamPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance.currentUser();
         var result = await http.post(
-            "http://10.0.2.2:54732/api/teams?authId=${user.uid}",
+            "${Env().baseUrl}/api/teams?authId=${user.uid}",
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"
