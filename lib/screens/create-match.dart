@@ -19,8 +19,8 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
   String _selectedTeam, _selectedOpponent = null;
   List<TeamModel> opponents = [];
   List<TeamModel> userTeams = [];
-  DateTime _fromDate = DateTime.now();
-  TimeOfDay _fromTime = const TimeOfDay(hour: 7, minute: 28);
+  DateTime _fromDate;
+  TimeOfDay _fromTime;
   DateTime _toDate = DateTime.now();
   TimeOfDay _toTime = const TimeOfDay(hour: 7, minute: 28);
   @override
@@ -28,6 +28,8 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
     super.initState();
     this._getOpponents();
     this._getUserTeams();
+    _fromDate = DateTime.now().add(Duration(minutes: 5));
+    _fromTime = TimeOfDay.now();
   }
 
   @override
@@ -175,12 +177,13 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                 matchDate: new DateTime(_fromDate.year, _fromDate.month, _fromDate.day, _fromTime.hour, _fromTime.minute),
                 rulesetId: 1)
             .toMap();
-        await http.post('http://10.0.2.2:54732/api/match',
+        var result = await http.post('http://10.0.2.2:54732/api/match',
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json"
             },
             body: json.encode(matchModel));
+            print(result);
       } catch (e) {
         print(e);
       }
@@ -256,10 +259,10 @@ class __DateTimePickerState extends State<_DateTimePicker> {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: widget.selectedDate,
-      firstDate: DateTime(2015, 8),
+      firstDate: widget.selectedDate.subtract(Duration(hours: DateTime.now().hour)),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != widget.selectedDate)
+    if (picked != null)
       widget.selectDate(picked);
   }
 
@@ -268,7 +271,7 @@ class __DateTimePickerState extends State<_DateTimePicker> {
       context: context,
       initialTime: widget.selectedTime,
     );
-    if (picked != null && picked != widget.selectedTime)
+    if (picked != null)
       widget.selectTime(picked);
   }
 
