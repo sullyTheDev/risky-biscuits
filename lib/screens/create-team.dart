@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import '../env.dart';
 
 class CreateTeamPage extends StatefulWidget {
-  TeamModel team;
+  final TeamModel team;
 
   CreateTeamPage({Key key, this.team}) : super(key: key);
   @override

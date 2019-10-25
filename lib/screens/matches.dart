@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:Risky_Biscuits/components/score-tile.dart';
+import 'package:Risky_Biscuits/components/slide-right-nav.dart';
 import 'package:Risky_Biscuits/models/match.model.dart';
+import 'package:Risky_Biscuits/screens/complete-match.dart';
 import 'package:Risky_Biscuits/screens/create-match.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +61,7 @@ class _MatchPageState extends State<MatchPage> {
                     actionPane: SlidableDrawerActionPane(),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(25.0, 5.0, 25.0, 0.0),
-                      child: ScoreTile(match: currentModel, onTap: () => print('wow'),)),);
+                      child: ScoreTile(match: currentModel, onTap: () {Navigator.push(context, SlideRightRoute(page: CompleteMatch(match: currentModel,)));},)),);
                 },
               );
         }
