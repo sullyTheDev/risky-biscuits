@@ -139,7 +139,8 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
 
   Future<List<TeamModel>> _getOpponents() async {
     List<TeamModel> results;
-    var result = await http.get('${Env().baseUrl}/teams');
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    var result = await http.get('${Env().baseUrl}/teams?authId=${user.uid}&others=${true}');
     if (result.statusCode == 200) {
       // print(result.body);
       var data = json.decode(result.body) as List;
