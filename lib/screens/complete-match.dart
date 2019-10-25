@@ -57,6 +57,7 @@ class CompleteMatchState extends State<CompleteMatch> {
                               Padding(
                               padding: EdgeInsets.fromLTRB(25.0, 5.0, 150.0, 25.0),
                               child: TextFormField(
+                                enabled: canComplete(),
                                 keyboardType: TextInputType.number,
                                 initialValue: challengerScore,
                                 validator: (input) {
@@ -84,6 +85,7 @@ class CompleteMatchState extends State<CompleteMatch> {
                               Padding(
                               padding: EdgeInsets.fromLTRB(25.0, 5.0, 150.0, 25.0),
                               child: TextFormField(
+                                enabled: canComplete(),
                                 keyboardType: TextInputType.number,
                                 initialValue: opponentScore,
                                 validator: (input) {
@@ -106,10 +108,17 @@ class CompleteMatchState extends State<CompleteMatch> {
                   child: RaisedButton(
                     color: Colors.blue,
                     textColor: Colors.white,
-                    onPressed: _completeMatch,
+                    onPressed: canComplete() ? _completeMatch : null,
                     child: Text('Complete Match'),
                   ),
-                ),)
+                ),),
+                !canComplete() ?
+               Padding(padding: EdgeInsets.only(top: 10.0), child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                  Padding(child: Icon(Icons.info_outline), padding: EdgeInsets.only(right: 10.0),),
+                  Text('You can only complete a match after it starts.')
+                ],),): Container(width: 0, height: 0,),
                           ],
                         ))))));
   }
@@ -147,5 +156,9 @@ class CompleteMatchState extends State<CompleteMatch> {
         print(e);
       }
     }
+  }
+
+  bool canComplete(){
+    return !DateTime.now().isBefore(this._match.matchDate);
   }
 }
